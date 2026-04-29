@@ -1,0 +1,10 @@
+// All the resources imported here will be available globally in all Vue components.
+// Do NOT import any CSS here — only SCSS variables, mixins, functions.
+
+// Variables
+@forward './variables/breakpoints';
+@forward './variables/colors';
+@forward './variables/typography';
+
+// Mixins
+@forward './mixins/include-media' show media;

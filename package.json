@@ -1,0 +1,44 @@
+{
+    "name": "undercover-game",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "nuxi dev",
+        "build": "nuxi build",
+        "generate": "nuxi generate",
+        "preview": "nuxi preview",
+        "prepare": "nuxi prepare",
+        "postinstall": "nuxi prepare",
+        "lint": "pnpm lint:js && pnpm lint:css",
+        "lint-fix": "pnpm lint:js --fix && pnpm lint:css --fix",
+        "lint:js": "eslint .",
+        "lint:css": "stylelint \"**/*.{vue,css,scss}\""
+    },
+    "devDependencies": {
+        "@nuxt/devtools": "latest",
+        "@nuxt/eslint": "^1.15.2",
+        "@nuxt/icon": "^2.2.1",
+        "@nuxtjs/supabase": "^2.0.6",
+        "@stylistic/eslint-plugin": "^5.0.0",
+        "@vueuse/nuxt": "^14.2.1",
+        "eslint": "^10.1.0",
+        "include-media": "^2.0.0",
+        "nuxt": "^4.3.1",
+        "postcss-html": "^1.8.1",
+        "sass": "^1.98.0",
+        "stylelint": "^17.6.0",
+        "stylelint-config-css-modules": "^4.6.0",
+        "stylelint-config-idiomatic-order": "^10.0.0",
+        "stylelint-config-standard-scss": "^17.0.0",
+        "stylelint-config-standard-vue": "^1.0.0",
+        "typescript": "~6.0.2"
+    },
+    "dependencies": {
+        "@nuxt/ui": "^4.7.1",
+        "@vueuse/core": "^14.2.1",
+        "tailwindcss": "^4.2.4"
+    },
+    "engines": {
+        "node": "24.15.0"
+    }
+}

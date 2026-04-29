@@ -1,0 +1,8 @@
+@use '../variables/breakpoints' as *;
+
+@forward "include-media/dist/include-media" with (
+    $breakpoints: $breakpoints,
+    $media-expressions: (
+        'hover': '(hover: hover)'
+    )
+);

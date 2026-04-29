@@ -1,0 +1,30 @@
+:root {
+    // Brand
+    --color-primary: #6c63ff;
+    --color-primary-dark: #4b44cc;
+    --color-secondary: #ff6584;
+
+    // Neutrals
+    --color-black: #0a0a0a;
+    --color-white: #fff;
+    --color-grey-100: #f5f5f5;
+    --color-grey-200: #e5e5e5;
+    --color-grey-400: #a0a0a0;
+    --color-grey-600: #666;
+    --color-grey-800: #333;
+
+    // Game roles
+    --color-civil: #4caf50;
+    --color-undercover: #f44336;
+    --color-mr-white: #9c27b0;
+
+    // Surfaces
+    --surface-bg: #f5f5f5;
+    --surface-card: #fff;
+    --surface-overlay: rgb(0, 0, 0, 50%);
+
+    // Typography
+    --text-primary: #333;
+    --text-secondary: #666;
+    --text-muted: #a0a0a0;
+}
