@@ -35,6 +35,7 @@
     },
     "dependencies": {
         "@nuxt/ui": "^4.7.1",
+        "@supabase/supabase-js": "^2.105.4",
         "@vueuse/core": "^14.2.1",
         "tailwindcss": "^4.2.4"
     },

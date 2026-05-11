@@ -1,12 +1,58 @@
 <script setup lang="ts">
+import type { JoinRoomResponse } from '~/types/api'
 const mode = ref<'home' | 'create' | 'join'>('home')
 const playerName = ref('')
 const roomCode = ref('')
+const loading = ref(false)
+const errorMessage = ref('')
+
+const storedPlayerId = useLocalStorage('undercover:player-id', '')
+const storedPlayerName = useLocalStorage('undercover:player-name', '')
+const storedRoomCode = useLocalStorage('undercover:room-code', '')
 
 function resetToHome() {
     mode.value = 'home'
     playerName.value = ''
     roomCode.value = ''
+    errorMessage.value = ''
+}
+
+async function handleJoin() {
+    loading.value = true
+    errorMessage.value = ''
+    try {
+        const { roomCode: code, playerId } = await $fetch<JoinRoomResponse>('/api/room/join', {
+            method: 'POST',
+            body: { playerName: playerName.value.trim(), roomCode: roomCode.value.trim() },
+        })
+        storedPlayerId.value = playerId
+        storedPlayerName.value = playerName.value.trim()
+        storedRoomCode.value = code
+        await navigateTo(`/room/${code}`)
+    } catch (e: unknown) {
+        errorMessage.value = e instanceof Error ? e.message : 'Une erreur est survenue'
+    } finally {
+        loading.value = false
+    }
+}
+
+async function handleCreate() {
+    loading.value = true
+    errorMessage.value = ''
+    try {
+        const { roomCode: code, playerId } = await $fetch<JoinRoomResponse>('/api/room', {
+            method: 'POST',
+            body: { playerName: playerName.value.trim() },
+        })
+        storedPlayerId.value = playerId
+        storedPlayerName.value = playerName.value.trim()
+        storedRoomCode.value = code
+        await navigateTo(`/room/${code}`)
+    } catch (e: unknown) {
+        errorMessage.value = e instanceof Error ? e.message : 'Une erreur est survenue'
+    } finally {
+        loading.value = false
+    }
 }
 </script>
 
@@ -62,14 +108,25 @@ function resetToHome() {
                     autocomplete="given-name"
                     size="lg"
                 />
+                <UAlert
+                    v-if="errorMessage"
+                    color="error"
+                    variant="soft"
+                    :description="errorMessage"
+                />
                 <div :class="$style['card-footer']">
                     <UButton
                         variant="ghost"
+                        :disabled="loading"
                         @click="resetToHome"
                     >
                         Retour
                     </UButton>
-                    <UButton :disabled="playerName.trim().length < 2">
+                    <UButton
+                        :disabled="playerName.trim().length < 2"
+                        :loading="loading"
+                        @click="handleCreate"
+                    >
                         Créer la room
                     </UButton>
                 </div>
@@ -100,15 +157,27 @@ function resetToHome() {
                     :maxlength="6"
                     size="lg"
                     hint="Le code à 6 caractères partagé par l'hôte"
+                    @input="roomCode = roomCode.toUpperCase()"
+                />
+                <UAlert
+                    v-if="errorMessage"
+                    color="error"
+                    variant="soft"
+                    :description="errorMessage"
                 />
                 <div :class="$style['card-footer']">
                     <UButton
                         variant="ghost"
+                        :disabled="loading"
                         @click="resetToHome"
                     >
                         Retour
                     </UButton>
-                    <UButton :disabled="playerName.trim().length < 2 || roomCode.trim().length !== 6">
+                    <UButton
+                        :disabled="playerName.trim().length < 2 || roomCode.trim().length !== 6"
+                        :loading="loading"
+                        @click="handleJoin"
+                    >
                         Rejoindre
                     </UButton>
                 </div>

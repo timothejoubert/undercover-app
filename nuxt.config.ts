@@ -18,10 +18,11 @@ export default defineNuxtConfig({
         },
     },
     css: [
-        '~/assets/css/main.css',  // Tailwind + NuxtUI
+        '~/assets/css/main.css', // Tailwind + NuxtUI
         '~/assets/scss/main.scss', // styles globaux custom
     ],
     runtimeConfig: {
+        supabaseSecretKey: '',
         public: {
             supabaseUrl: '',
             supabaseKey: '',
@@ -52,6 +53,9 @@ export default defineNuxtConfig({
     },
     // https://supabase.nuxtjs.org/get-started
     supabase: {
+        url: process.env.NUXT_PUBLIC_SUPABASE_URL,
+        key: process.env.NUXT_PUBLIC_SUPABASE_KEY,
+        serviceKey: process.env.NUXT_SUPABASE_SECRET_KEY,
         redirect: false,
         types: '~/types/database.types.ts',
     },
