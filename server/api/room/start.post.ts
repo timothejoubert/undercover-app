@@ -1,5 +1,3 @@
-import type { Database } from '~/types/database.types'
-
 type PlayerRole = 'civil' | 'undercover'
 
 const WORD_PAIRS = [
@@ -14,7 +12,7 @@ const WORD_PAIRS = [
 ]
 
 export default defineEventHandler(async (event) => {
-    const body = await readBody<{ playerId: string; roomCode: string }>(event)
+    const body = await readBody<{ playerId: string, roomCode: string }>(event)
     const { playerId, roomCode } = body
 
     if (!playerId || !roomCode) {

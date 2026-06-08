@@ -53,9 +53,9 @@ export default defineNuxtConfig({
     },
     // https://supabase.nuxtjs.org/get-started
     supabase: {
-        url: process.env.NUXT_PUBLIC_SUPABASE_URL,
-        key: process.env.NUXT_PUBLIC_SUPABASE_KEY,
-        serviceKey: process.env.NUXT_SUPABASE_SECRET_KEY,
+        url: process.env.NUXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+        key: process.env.NUXT_PUBLIC_SUPABASE_KEY || 'placeholder-anon-key',
+        serviceKey: process.env.NUXT_SUPABASE_SECRET_KEY || 'placeholder-service-key',
         redirect: false,
         types: '~/types/database.types.ts',
     },

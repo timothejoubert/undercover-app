@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import type { JoinRoomResponse } from '~/types/api'
 const mode = ref<'home' | 'create' | 'join'>('home')
 const playerName = ref('')
 const roomCode = ref('')
 const loading = ref(false)
 const errorMessage = ref('')
 
-const storedPlayerId = useLocalStorage('undercover:player-id', '')
-const storedPlayerName = useLocalStorage('undercover:player-name', '')
-const storedRoomCode = useLocalStorage('undercover:room-code', '')
+const { createRoom, joinRoom } = useGame()
 
 function resetToHome() {
     mode.value = 'home'
@@ -17,40 +14,26 @@ function resetToHome() {
     errorMessage.value = ''
 }
 
-async function handleJoin() {
-    loading.value = true
-    errorMessage.value = ''
-    try {
-        const { roomCode: code, playerId } = await $fetch<JoinRoomResponse>('/api/room/join', {
-            method: 'POST',
-            body: { playerName: playerName.value.trim(), roomCode: roomCode.value.trim() },
-        })
-        storedPlayerId.value = playerId
-        storedPlayerName.value = playerName.value.trim()
-        storedRoomCode.value = code
-        await navigateTo(`/room/${code}`)
-    } catch (e: unknown) {
-        errorMessage.value = e instanceof Error ? e.message : 'Une erreur est survenue'
-    } finally {
-        loading.value = false
-    }
-}
-
 async function handleCreate() {
     loading.value = true
     errorMessage.value = ''
     try {
-        const { roomCode: code, playerId } = await $fetch<JoinRoomResponse>('/api/room', {
-            method: 'POST',
-            body: { playerName: playerName.value.trim() },
-        })
-        storedPlayerId.value = playerId
-        storedPlayerName.value = playerName.value.trim()
-        storedRoomCode.value = code
-        await navigateTo(`/room/${code}`)
-    } catch (e: unknown) {
+        await createRoom(playerName.value)
+    }
+    catch (e: unknown) {
         errorMessage.value = e instanceof Error ? e.message : 'Une erreur est survenue'
-    } finally {
+        loading.value = false
+    }
+}
+
+async function handleJoin() {
+    loading.value = true
+    errorMessage.value = ''
+    try {
+        await joinRoom(roomCode.value, playerName.value)
+    }
+    catch (e: unknown) {
+        errorMessage.value = e instanceof Error ? e.message : 'Une erreur est survenue'
         loading.value = false
     }
 }
