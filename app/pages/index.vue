@@ -1,16 +1,35 @@
 <script setup lang="ts">
+import type { GameMode } from '~/types/game'
+
 const mode = ref<'home' | 'create' | 'join'>('home')
 const playerName = ref('')
 const roomCode = ref('')
+const selectedMode = ref<GameMode>('local')
 const loading = ref(false)
 const errorMessage = ref('')
 
 const { createRoom, joinRoom } = useGame()
 
+const gameModeOptions: Array<{ value: GameMode, label: string, description: string, soon: boolean }> = [
+    {
+        value: 'local',
+        label: '📱 Pass-the-phone',
+        description: 'Un seul téléphone pour tout le monde',
+        soon: false,
+    },
+    {
+        value: 'remote',
+        label: '🌐 Chaque joueur connecté',
+        description: 'Chacun sur son téléphone',
+        soon: true,
+    },
+]
+
 function resetToHome() {
     mode.value = 'home'
     playerName.value = ''
     roomCode.value = ''
+    selectedMode.value = 'local'
     errorMessage.value = ''
 }
 
@@ -18,7 +37,7 @@ async function handleCreate() {
     loading.value = true
     errorMessage.value = ''
     try {
-        await createRoom(playerName.value)
+        await createRoom(playerName.value, selectedMode.value)
     }
     catch (e: unknown) {
         errorMessage.value = e instanceof Error ? e.message : 'Une erreur est survenue'
@@ -83,6 +102,7 @@ async function handleJoin() {
                 <h2 :class="$style['card-title']">
                     Nouvelle partie
                 </h2>
+
                 <UInput
                     v-model="playerName"
                     label="Ton prénom"
@@ -91,6 +111,34 @@ async function handleJoin() {
                     autocomplete="given-name"
                     size="lg"
                 />
+
+                <!-- Mode de jeu -->
+                <div :class="$style['mode-section']">
+                    <p :class="$style['mode-label']">
+                        Mode de jeu
+                    </p>
+                    <div :class="$style['mode-options']">
+                        <button
+                            v-for="option in gameModeOptions"
+                            :key="option.value"
+                            :class="[
+                                $style['mode-option'],
+                                selectedMode === option.value && $style['mode-option--selected'],
+                                option.soon && $style['mode-option--disabled'],
+                            ]"
+                            :disabled="option.soon"
+                            @click="!option.soon && (selectedMode = option.value)"
+                        >
+                            <span :class="$style['mode-option-label']">{{ option.label }}</span>
+                            <span :class="$style['mode-option-desc']">{{ option.description }}</span>
+                            <span
+                                v-if="option.soon"
+                                :class="$style['mode-option-badge']"
+                            >Bientôt</span>
+                        </button>
+                    </div>
+                </div>
+
                 <UAlert
                     v-if="errorMessage"
                     color="error"
@@ -224,5 +272,78 @@ async function handleJoin() {
     align-items: center;
     justify-content: space-between;
     margin-top: 8px;
+}
+
+// Mode selector
+.mode-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mode-label {
+    color: var(--ui-text-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.mode-options {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 1fr 1fr;
+}
+
+.mode-option {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px;
+    border: 2px solid var(--ui-border);
+    border-radius: 10px;
+    background: var(--ui-bg-elevated);
+    cursor: pointer;
+    gap: 4px;
+    text-align: left;
+    transition: border-color 0.15s, background 0.15s;
+
+    &:hover:not(:disabled) {
+        border-color: color-mix(in srgb, var(--ui-primary) 40%, transparent);
+    }
+}
+
+.mode-option--selected {
+    border-color: var(--ui-primary);
+    background: color-mix(in srgb, var(--ui-primary) 8%, transparent);
+}
+
+.mode-option--disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.mode-option-label {
+    font-size: 0.9375rem;
+    font-weight: 600;
+}
+
+.mode-option-desc {
+    color: var(--ui-text-muted);
+    font-size: 0.75rem;
+    line-height: 1.3;
+}
+
+.mode-option-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--ui-bg-accented);
+    color: var(--ui-text-muted);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 </style>

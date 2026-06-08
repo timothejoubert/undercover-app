@@ -2,7 +2,7 @@
 const route = useRoute()
 const code = (route.params.code as string).toUpperCase()
 
-const { room, players, isHost, addPlayer, startGame } = useGame()
+const { room, players, isHost, isLocalMode, addPlayer, startGame } = useGame()
 
 const showAddPlayer = ref(false)
 const newPlayerName = ref('')
@@ -62,7 +62,7 @@ async function copyCode() {
                 </UButton>
             </div>
             <p :class="$style['code-hint']">
-                Passez le téléphone à chaque joueur pour l'ajouter
+                {{ isLocalMode ? 'Passez le téléphone à chaque joueur pour l\'ajouter' : 'Partagez ce code — chaque joueur le saisit sur son téléphone' }}
             </p>
         </header>
 
@@ -89,44 +89,46 @@ async function copyCode() {
                     </li>
                 </ul>
 
-                <!-- Formulaire ajout joueur -->
-                <div
-                    v-if="showAddPlayer"
-                    :class="$style['add-form']"
-                >
-                    <UInput
-                        v-model="newPlayerName"
-                        placeholder="Prénom du joueur"
-                        :maxlength="24"
-                        autofocus
-                        size="lg"
-                        @keyup.enter="handleAddPlayer"
-                    />
-                    <div :class="$style['add-form-actions']">
-                        <UButton
-                            variant="ghost"
-                            @click="showAddPlayer = false"
-                        >
-                            Annuler
-                        </UButton>
-                        <UButton
-                            :disabled="newPlayerName.trim().length < 2"
-                            @click="handleAddPlayer"
-                        >
-                            Ajouter
-                        </UButton>
+                <!-- Formulaire ajout joueur — local uniquement -->
+                <template v-if="isLocalMode">
+                    <div
+                        v-if="showAddPlayer"
+                        :class="$style['add-form']"
+                    >
+                        <UInput
+                            v-model="newPlayerName"
+                            placeholder="Prénom du joueur"
+                            :maxlength="24"
+                            autofocus
+                            size="lg"
+                            @keyup.enter="handleAddPlayer"
+                        />
+                        <div :class="$style['add-form-actions']">
+                            <UButton
+                                variant="ghost"
+                                @click="showAddPlayer = false"
+                            >
+                                Annuler
+                            </UButton>
+                            <UButton
+                                :disabled="newPlayerName.trim().length < 2"
+                                @click="handleAddPlayer"
+                            >
+                                Ajouter
+                            </UButton>
+                        </div>
                     </div>
-                </div>
 
-                <UButton
-                    v-else
-                    variant="outline"
-                    block
-                    :disabled="players.length >= 12"
-                    @click="showAddPlayer = true"
-                >
-                    + Ajouter un joueur
-                </UButton>
+                    <UButton
+                        v-else
+                        variant="outline"
+                        block
+                        :disabled="players.length >= 12"
+                        @click="showAddPlayer = true"
+                    >
+                        + Ajouter un joueur
+                    </UButton>
+                </template>
 
                 <p
                     v-if="players.length < 3"

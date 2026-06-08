@@ -38,10 +38,25 @@
 - [x] Écran de résultat : vainqueur + révélation de tous les rôles
 - [x] Bouton "Nouvelle partie"
 
-### À faire — pass-the-phone
-- [ ] **Mr. White** : assigner le rôle (1 pour 5+ joueurs, option activable)
+### 🐛 Bugs
+- [ ] **Vote ne fonctionne pas** : l'action de voter contre un joueur est bloquée — à investiguer et corriger
+
+### Options de partie (écran de config dans le lobby avant de lancer)
+- [ ] **Nombre d'undercovers configurable** : slider ou +/- avec recommandations selon le nombre de joueurs
+  - Recommandations : 1 pour 3–6 joueurs · 2 pour 7–10 · 3 pour 11–12
+- [ ] **Nombre de Mr. White configurable** : 0 par défaut, max 2
+  - Recommandations : 0 pour ≤4 joueurs · 1 pour 5–9 · 2 pour 10+
+  - Mr. White ne reçoit **aucun mot** (contrairement à l'undercover qui reçoit le mot undercover)
+- [ ] **L'undercover sait-il qu'il est undercover ?** : option toggle
+  - Désactivé par défaut → l'undercover voit son mot mais pas son rôle (il doit deviner qu'il est suspect)
+  - Activé → l'undercover voit explicitement son badge "Undercover"
+
+### Mr. White (dépend des options ci-dessus)
+- [ ] **Distribution** : Mr. White voit un écran "Tu n'as pas de mot — tu es Mr. White. Écoute et déduis !"
 - [ ] **Mr. White éliminé** : écran de devinette — il tente de deviner le mot civil
-- [ ] **Mr. White gagne** s'il devine correctement, sinon les civils gagnent
+- [ ] **Mr. White gagne** s'il devine correctement · civils gagnent s'il rate · undercovers gagnent si condition remplie
+
+### Contenu & UX
 - [ ] **Timer optionnel** pour la phase de description (30s / 60s / libre)
 - [ ] **Banque de mots étendue** : 200+ paires avec catégories (nourriture, sport, nature…)
 - [ ] **Mots personnalisés** : l'hôte saisit ses propres paires avant de lancer

@@ -1,4 +1,4 @@
-import type { Role, Player, Room } from '~/types/game'
+import type { Role, Player, Room, GameMode } from '~/types/game'
 
 // ─── Word bank ────────────────────────────────────────────────────────────────
 const WORD_PAIRS: Array<{ civil: string, undercover: string }> = [
@@ -59,6 +59,9 @@ export function useGame() {
     const players = useState<Player[]>('game:players', () => [])
     const myPlayerId = useState('game:myPlayerId', () => '')
     const currentRound = useState('game:round', () => 1)
+    const gameMode = useState<GameMode>('game:mode', () => 'local')
+
+    const isLocalMode = computed(() => gameMode.value === 'local')
     // Phase 2: replace with Supabase tables
     const descriptions = useState<Array<{ playerId: string, text: string }>>('game:descriptions', () => [])
     const votes = useState<Array<{ voterId: string, targetId: string }>>('game:votes', () => [])
@@ -112,13 +115,14 @@ export function useGame() {
                 if (s.votes) votes.value = s.votes
                 if (s.lastEliminatedId !== undefined) lastEliminatedId.value = s.lastEliminatedId
                 if (s.winner !== undefined) winner.value = s.winner
+                if (s.gameMode) gameMode.value = s.gameMode
             }
         }
         catch { /* ignore parse errors */ }
     })
 
     watch(
-        [room, players, myPlayerId, currentRound, descriptions, votes, lastEliminatedId, winner],
+        [room, players, myPlayerId, currentRound, descriptions, votes, lastEliminatedId, winner, gameMode],
         () => {
             if (!import.meta.client) return
             try {
@@ -131,6 +135,7 @@ export function useGame() {
                     votes: votes.value,
                     lastEliminatedId: lastEliminatedId.value,
                     winner: winner.value,
+                    gameMode: gameMode.value,
                 }))
             }
             catch { /* ignore storage errors */ }
@@ -140,11 +145,17 @@ export function useGame() {
 
     // ── Actions ───────────────────────────────────────────────────────────────
 
-    // Phase 2: $fetch('/api/room', { method: 'POST', body: { playerName } })
-    async function createRoom(playerName: string): Promise<void> {
+    // Phase 2: branch on mode — local stays as-is, remote calls $fetch('/api/room', POST)
+    async function createRoom(playerName: string, mode: GameMode = 'local'): Promise<void> {
+        if (mode === 'remote') {
+            // Phase 2: implement remote room creation via $fetch
+            throw new Error('Le mode connecté n\'est pas encore disponible')
+        }
+
         const playerId = crypto.randomUUID()
         const code = generateCode()
 
+        gameMode.value = mode
         room.value = { id: crypto.randomUUID(), code, hostId: playerId, status: 'lobby' }
         players.value = [{ id: playerId, name: playerName.trim(), isAlive: true, hasSeenWord: false }]
         myPlayerId.value = playerId
@@ -264,6 +275,7 @@ export function useGame() {
         players.value = []
         myPlayerId.value = ''
         currentRound.value = 1
+        gameMode.value = 'local'
         descriptions.value = []
         votes.value = []
         lastEliminatedId.value = null
@@ -276,6 +288,8 @@ export function useGame() {
         players: readonly(players),
         myPlayerId: readonly(myPlayerId),
         currentRound: readonly(currentRound),
+        gameMode: readonly(gameMode),
+        isLocalMode,
         descriptions: readonly(descriptions),
         votes: readonly(votes),
         winner: readonly(winner),

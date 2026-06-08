@@ -1,5 +1,6 @@
 export type Role = 'civil' | 'undercover' | 'mr_white'
 export type GameStatus = 'lobby' | 'distributing' | 'playing' | 'voting' | 'result' | 'ended'
+export type GameMode = 'local' | 'remote'
 
 export interface Player {
     id: string
